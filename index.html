@@ -44,11 +44,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: safe center;
       text-align: center;
-      padding: 2.5rem 1.5rem;
+      padding: 2rem 1.5rem;
       position: relative;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -67,11 +68,10 @@
     .leaves { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
     .leaf-float {
       position: absolute;
-      color: var(--sage);
       opacity: 0.12;
+      object-fit: contain;
       animation: drift linear infinite;
     }
-    .leaf-float svg { display: block; width: 100%; height: 100%; }
     .lf1 { width: 90px;  height: 101px; top: 12%; left: 8%;  animation-duration: 15s; }
     .lf2 { width: 130px; height: 146px; top: 62%; left: 80%; animation-duration: 19s; animation-delay: -4s; opacity: 0.1; }
     .lf3 { width: 70px;  height: 79px;  top: 78%; left: 14%; animation-duration: 17s; animation-delay: -8s; }
@@ -94,7 +94,7 @@
     @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
     /* Logo */
-    .logo-img { width: min(280px, 64vw); height: auto; display: block; margin: 0 auto; }
+    .logo-img { width: min(230px, 56vw); height: auto; display: block; margin: 0 auto; }
 
     .eyebrow {
       margin-top: 3rem;
@@ -205,10 +205,10 @@
 
   <!-- Floating leaf motifs -->
   <div class="leaves" aria-hidden="true">
-    <div class="leaf-float lf1"><svg viewBox="0 0 80 90" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M40 88 C40 72 40 60 40 48"/><path d="M40 48 C33 38 33 20 40 10 C47 20 47 38 40 48Z"/><path d="M40 60 C31 55 24 44 23 33 C34 35 42 46 40 60Z"/><path d="M40 56 C49 50 56 40 57 29 C46 31 38 42 40 56Z"/></svg></div>
-    <div class="leaf-float lf2"><svg viewBox="0 0 80 90" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M40 88 C40 72 40 60 40 48"/><path d="M40 48 C33 38 33 20 40 10 C47 20 47 38 40 48Z"/><path d="M40 60 C31 55 24 44 23 33 C34 35 42 46 40 60Z"/><path d="M40 56 C49 50 56 40 57 29 C46 31 38 42 40 56Z"/></svg></div>
-    <div class="leaf-float lf3"><svg viewBox="0 0 80 90" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M40 88 C40 72 40 60 40 48"/><path d="M40 48 C33 38 33 20 40 10 C47 20 47 38 40 48Z"/><path d="M40 60 C31 55 24 44 23 33 C34 35 42 46 40 60Z"/><path d="M40 56 C49 50 56 40 57 29 C46 31 38 42 40 56Z"/></svg></div>
-    <div class="leaf-float lf4"><svg viewBox="0 0 80 90" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M40 88 C40 72 40 60 40 48"/><path d="M40 48 C33 38 33 20 40 10 C47 20 47 38 40 48Z"/><path d="M40 60 C31 55 24 44 23 33 C34 35 42 46 40 60Z"/><path d="M40 56 C49 50 56 40 57 29 C46 31 38 42 40 56Z"/></svg></div>
+    <img class="leaf-float lf1" src="leaf.png" alt="" />
+    <img class="leaf-float lf2" src="leaf.png" alt="" />
+    <img class="leaf-float lf3" src="leaf.png" alt="" />
+    <img class="leaf-float lf4" src="leaf.png" alt="" />
   </div>
 
   <main class="card">
@@ -232,7 +232,7 @@
       <input type="email" id="email" name="email" placeholder="Your email address" aria-label="Your email address" required />
       <button type="submit">Notify me</button>
     </form>
-    <p class="thanks" id="thanks" hidden>Thank you — we&rsquo;ll let you know the moment we open. 🌿</p>
+    <p class="thanks" id="thanks" hidden>You&rsquo;re on the list! We&rsquo;ll email you the moment we open. 🌿</p>
 
     <p class="contact">
       In the meantime, say hello -
@@ -277,7 +277,8 @@
         });
         var data = await res.json();
         if (data.success) {
-          form.hidden = true;
+          button.textContent = 'Sent ✓';
+          email.readOnly = true;
           thanks.hidden = false;
         } else {
           throw new Error(data.message || 'submit failed');

@@ -3,10 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cuddle Leaf Australia — Coming Soon</title>
+  <title>Cuddle Leaf Australia - Coming Soon</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/png" sizes="64x64" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
   <meta name="description" content="Cuddle Leaf Australia — premium newborn essentials, designed in Australia. Our new online home is coming soon." />
   <meta name="robots" content="index, follow" />
-  <meta property="og:title" content="Cuddle Leaf Australia — Coming Soon" />
+  <meta property="og:title" content="Cuddle Leaf Australia - Coming Soon" />
   <meta property="og:description" content="Something gentle is on its way. Premium newborn essentials, designed in Australia." />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -223,7 +226,11 @@
     </p>
 
     <form id="notify" novalidate>
-      <input type="email" id="email" placeholder="Your email address" aria-label="Your email address" required />
+      <input type="hidden" name="access_key" value="44a4ac68-8d3d-4867-8f14-6b2fd737c155" />
+      <input type="hidden" name="subject" value="New Coming Soon signup — Cuddle Leaf" />
+      <input type="hidden" name="from_name" value="Cuddle Leaf — Coming Soon" />
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <input type="email" id="email" name="email" placeholder="Your email address" aria-label="Your email address" required />
       <button type="submit">Notify me</button>
     </form>
     <p class="thanks" id="thanks" hidden>Thank you — we&rsquo;ll let you know the moment we open. 🌿</p>
@@ -250,8 +257,9 @@
     var form = document.getElementById('notify');
     var email = document.getElementById('email');
     var thanks = document.getElementById('thanks');
+    var button = form.querySelector('button[type="submit"]');
 
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
       var value = (email.value || '').trim();
       if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -259,16 +267,28 @@
         email.style.borderColor = '#c0674f';
         return;
       }
-      // No backend on a static page — open the visitor's mail client so they can reach us,
-      // then show a friendly confirmation. (Swap for a form service to auto-collect emails.)
+      var label = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Sending…';
       try {
-        window.location.href =
-          'mailto:contact.cuddleleaf@gmail.com'
-          + '?subject=' + encodeURIComponent('Notify me when Cuddle Leaf opens')
-          + '&body=' + encodeURIComponent('Please let me know when you launch. My email: ' + value);
-      } catch (err) {}
-      form.hidden = true;
-      thanks.hidden = false;
+        var res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form)))
+        });
+        var data = await res.json();
+        if (data.success) {
+          form.hidden = true;
+          thanks.hidden = false;
+        } else {
+          throw new Error(data.message || 'submit failed');
+        }
+      } catch (err) {
+        button.disabled = false;
+        button.textContent = 'Try again';
+        email.style.borderColor = '#c0674f';
+        setTimeout(function () { button.textContent = label; }, 2500);
+      }
     });
   </script>
 </body>
